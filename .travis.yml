@@ -4,12 +4,13 @@ before_install:
   - wget https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-stable-linux-amd64.zip
   - unzip ngrok-stable-linux-amd64.zip
   - sudo mv ngrok /usr/local/bin
-  - ngrok authtoken <2q40pjTmTSqo2nVmmwrj8WCegV2_6kh6Ak5KVzrt5m8KjACRW>
+  - ngrok authtoken 2q40pjTmTSqo2nVmmwrj8WCegV2_6kh6Ak5KVzrt5m8KjACRW
 
 script:
   - python3 -m http.server 6000 &
   - ngrok tcp 6000 &
 
 after_script:
+  - sleep 5
   - echo "NGROK_URL=$(curl --silent http://127.0.0.1:4040/api/tunnels | jq -r '.tunnels[0].public_url')" > ngrok_url.txt
   - cat ngrok_url.txt
