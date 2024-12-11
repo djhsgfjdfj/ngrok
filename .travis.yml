@@ -1,16 +1,21 @@
 language: python
 
 before_install:
-  - wget https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-stable-linux-amd64.zip
-  - unzip ngrok-stable-linux-amd64.zip
-  - sudo mv ngrok /usr/local/bin
-  - ngrok authtoken 2q40pjTmTSqo2nVmmwrj8WCegV2_6kh6Ak5KVzrt5m8KjACRW
+  # No extra dependencies needed for Serveo
 
 script:
-  - python3 -m http.server 6000 &
-  - ngrok tcp 6000 &
+  # Start an HTTP server on port 3000
+  - python3 -m http.server 3000 &
+  # Use SSH to create a Serveo tunnel
+  - ssh -R 80:localhost:3000 serveo.net > serveo_url.txt &
+  # Wait for the tunnel to initialize
   - sleep 5
-  - echo "NGROK_URL=$(curl --silent http://127.0.0.1:4040/api/tunnels | jq -r '.tunnels[0].public_url')" > ngrok_url.txt
-  - cat ngrok_url.txt
+  # Output the Serveo URL
+  - cat serveo_url.txt
+  - grep -o "https://[^\s]*" serveo_url.txt > public_url.txt
+  - echo "Public URL is:"
+  - cat public_url.txt
+
+after_script:
+  # Wait for background processes to finish
   - wait
-  
