@@ -6,16 +6,16 @@ before_install:
 script:
   # Start an HTTP server on port 3000
   - python3 -m http.server 3000 &
-  # Use SSH to create a Serveo tunnel
-  - ssh -R 80:localhost:3000 serveo.net > serveo_url.txt &
+  # Bypass SSH host authenticity and create a Serveo tunnel
+  - ssh -o StrictHostKeyChecking=no -R 80:localhost:3000 serveo.net > serveo_url.txt &
   # Wait for the tunnel to initialize
   - sleep 5
   # Output the Serveo URL
   - cat serveo_url.txt
-  - grep -o "https://[^\s]*" serveo_url.txt > public_url.txt
+  - grep -oP "https://[^\s]+" serveo_url.txt > public_url.txt
   - echo "Public URL is:"
   - cat public_url.txt
 
 after_script:
-  # Wait for background processes to finish
+  # Ensure background processes finish
   - wait
