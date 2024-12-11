@@ -9,8 +9,7 @@ before_install:
 script:
   - python3 -m http.server 6000 &
   - ngrok tcp 6000 &
-
-after_script:
   - sleep 5
   - echo "NGROK_URL=$(curl --silent http://127.0.0.1:4040/api/tunnels | jq -r '.tunnels[0].public_url')" > ngrok_url.txt
   - cat ngrok_url.txt
+  - wait
